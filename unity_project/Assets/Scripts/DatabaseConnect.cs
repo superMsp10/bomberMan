@@ -11,7 +11,6 @@ public class DatabaseConnect : MonoBehaviour
 
 		public InputField postDataName;
 		public InputField postData;
-
 		public Text console;
 
 		private string url = "http://bbman-supermsp10.rhcloud.com/Utilities";
@@ -23,7 +22,14 @@ public class DatabaseConnect : MonoBehaviour
 				yield return www;
 				if (www.error == null) {
 						JSONObject j = JSONObject.Parse (www.text);
-						Debug.Log (j);
+						int gameVersion = GameManeger.Version;		
+						int databaseVersion = (int)j.GetNumber ("Version");
+
+						if (gameVersion == databaseVersion) {
+								GetComponent<Connect> ().TryConnectToServer ();
+						} else {
+
+						}
 
 		
 				} else {
