@@ -1,6 +1,8 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Collections;
+using Boomlagoon.JSON;
+
 
 
 public class DatabaseConnect : MonoBehaviour
@@ -9,16 +11,39 @@ public class DatabaseConnect : MonoBehaviour
 
 		public InputField postDataName;
 		public InputField postData;
-
 		public Text console;
 
-		public string url = "http://bbman-supermsp10.rhcloud.com/Utilities";
+		private string url = "http://bbman-supermsp10.rhcloud.com/Utilities";
+
+		IEnumerator Start ()
+		{
+				WWW www;
+				www = new WWW (url + "/560f2a96e4b09f9838bbf46a");
+				yield return www;
+				if (www.error == null) {
+						JSONObject j = JSONObject.Parse (www.text);
+						int gameVersion = GameManeger.Version;		
+						int databaseVersion = (int)j.GetNumber ("Version");
+
+						if (gameVersion == databaseVersion) {
+								GetComponent<Connect> ().TryConnectToServer ();
+						} else {
+
+						}
+
+		
+				} else {
+						Debug.Log ("ERROR: " + www.error);
+				}        
+				www.Dispose ();
+		}
+
 
 		IEnumerator getHttp ()
 		{
 
 				WWW www;
-				www = new WWW ("https://bbman-supermsp10.rhcloud.com/Utilities");
+				www = new WWW (url);
 				yield return www;
 				if (www.error == null) {
 						console.text = www.text;
@@ -41,12 +66,7 @@ public class DatabaseConnect : MonoBehaviour
 				Debug.Log ("hello");
 		}
 
-		// Use this for initialization
-		void Start ()
-		{
 
-		}
-	
 		// Update is called once per frame
 		void Update ()
 		{
